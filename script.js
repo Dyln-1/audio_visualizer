@@ -7,7 +7,7 @@ let playing = false;    // Whether the visualizer is active
 
 function preload() {
   // Load your audio file from the audio folder
-  audio = loadSound('audio/music.mp3');
+  audio = loadSound('music.mp3');
 }
 
 function setup() {
