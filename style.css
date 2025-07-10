@@ -1,0 +1,14 @@
+/* Make the page fullscreen and black */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* Make the canvas fill the screen */
+canvas {
+  display: block;
+}
