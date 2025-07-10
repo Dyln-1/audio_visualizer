@@ -1,12 +1,12 @@
-// Global variables
-let audio;              // p5.Sound object
-let fft;                // FFT analyzer
-let baseHue = 0;        // Starting hue for color cycling
-let rotationSpeed = 0.06; // Speed of rotation
-let playing = false;    // Whether the visualizer is active
+// Global variables for audio and visualization
+let audio;              // p5.Sound object for playing music
+let fft;                // FFT analyzer for frequency spectrum
+let baseHue = 0;        // Base hue for color cycling of bars
+let rotationSpeed = 0.06; // Rotation speed of visualizer bars
+let playing = false;    // Flag to indicate if audio is playing
 
 function preload() {
-  // Load your audio file from the audio folder
+  // Load the audio file (make sure 'music.mp3' is in your project folder)
   audio = loadSound('music.mp3');
 }
 
@@ -15,18 +15,14 @@ function setup() {
   angleMode(RADIANS);
   colorMode(HSL);
   fft = new p5.FFT();
-
-  // Start audio in loop, but muted (autoplay-safe)
-  audio.loop();
-  audio.setVolume(0);
   fft.setInput(audio);
 }
 
 function draw() {
   background(0);
 
-  // If audio isn't active yet, show a message
   if (!playing) {
+    // Show instructions before playing
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(24);
@@ -34,44 +30,52 @@ function draw() {
     return;
   }
 
-  // Analyze the audio frequency spectrum
+  // Analyze the frequency spectrum of the audio
   let spectrum = fft.analyze();
+
+  // Move origin to center of canvas for circular drawing
   translate(width / 2, height / 2);
 
-  let bars = spectrum.length;
-  let angleStep = TWO_PI / bars;
+  let bars = spectrum.length;           // Number of bars to draw
+  let angleStep = TWO_PI / bars;        // Angle between each bar
 
   for (let i = 0; i < bars; i++) {
-    let amp = spectrum[i];
-    let len = map(amp, 0, 255, 5, height / 2);
-    let hue = (baseHue + i * 0.5) % 360;
+    let amp = spectrum[i];                               // Amplitude of current frequency
+    let len = map(amp, 0, 255, 5, height / 2);          // Length of bar based on amplitude
+    let hue = (baseHue + i * 0.5) % 360;                // Hue cycles through color spectrum
 
     push();
-    rotate(i * angleStep + frameCount * rotationSpeed);
-    fill(hue, 100, len / 3);
+    rotate(i * angleStep + frameCount * rotationSpeed); // Rotate bar around center
+    fill(hue, 100, len / 3);                             // Set bar color with HSL
     noStroke();
-    rect(0, 0, 2, len);
+    rect(0, 0, 2, len);                                  // Draw the bar rectangle
     pop();
   }
 }
 
-// Trigger audio and visualizer on first click
+// Called on mouse press to start or change visualizer
 function mousePressed() {
   if (!playing) {
-    audio.setVolume(1); // Unmute audio
-    playing = true;
+    // Resume AudioContext to satisfy browser autoplay policies
+    getAudioContext().resume().then(() => {
+      audio.loop();           // Start looping the audio
+      audio.setVolume(1);     // Unmute audio
+      playing = true;         // Mark as playing
+    });
   } else {
-    baseHue = floor(random(360)); // Change color scheme on future clicks
+    // Change colors on subsequent clicks
+    baseHue = floor(random(360));
   }
 }
 
-// Adjust rotation speed based on horizontal mouse position
+// Adjust rotation speed by horizontal mouse position
 function mouseMoved() {
   let pct = mouseX / width;
   rotationSpeed = 0.001 + pct * 0.05;
 }
 
-// Resize canvas when window changes
+// Resize canvas on window resize
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+
