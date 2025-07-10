@@ -36,19 +36,19 @@ function draw() {
   // Move origin to center of canvas for circular drawing
   translate(width / 2, height / 2);
 
-  let bars = spectrum.length;           // Number of bars to draw
+  let bars = spectrum.length;           // Number of bars 
   let angleStep = TWO_PI / bars;        // Angle between each bar
 
   for (let i = 0; i < bars; i++) {
-    let amp = spectrum[i];                               // Amplitude of current frequency
-    let len = map(amp, 0, 255, 5, height / 2);          // Length of bar based on amplitude
-    let hue = (baseHue + i * 0.5) % 360;                // Hue cycles through color spectrum
+    let amp = spectrum[i];                               // Amplitude of frequency
+    let len = map(amp, 0, 255, 5, height / 2);          // Length of the bar based on amplitude
+    let hue = (baseHue + i * 0.5) % 360;                // Hue cycles through diferrent colors 
 
     push();
     rotate(i * angleStep + frameCount * rotationSpeed); // Rotate bar around center
-    fill(hue, 100, len / 3);                             // Set bar color with HSL
+    fill(hue, 100, len / 3);                             // Set bar color 
     noStroke();
-    rect(0, 0, 2, len);                                  // Draw the bar rectangle
+    rect(0, 0, 2, len);                                  // Draw the bar rect
     pop();
   }
 }
@@ -63,7 +63,7 @@ function mousePressed() {
       playing = true;         // Mark as playing
     });
   } else {
-    // Change colors on subsequent clicks
+    // Change colors on clicks
     baseHue = floor(random(360));
   }
 }
@@ -74,7 +74,7 @@ function mouseMoved() {
   rotationSpeed = 0.001 + pct * 0.05;
 }
 
-// Resize canvas on window resize
+// Resize canvas
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
